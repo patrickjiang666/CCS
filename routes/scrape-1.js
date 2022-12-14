@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const puppeteer = require('puppeteer');
 
+const {authentication} = require('../Services/authentication');
+
 /* scraping service route */
 router.get('/', async function(req, res, next) {
     // Launch the browser
@@ -10,7 +12,7 @@ router.get('/', async function(req, res, next) {
     });
 
     // Create a page
-    const page = await browser.newPage();
+    let page = await browser.newPage();
     await page.setRequestInterception(true);
     page.on('request', request => {
         // if ([
@@ -25,6 +27,12 @@ router.get('/', async function(req, res, next) {
             request.continue();
         // }
     });
+
+    page = await authentication({
+        userid: "paul kim",
+        pw: "0717",
+        page
+    })
 
     // Go to your site
 	await page.goto('https://example.com/');
